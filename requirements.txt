@@ -6,6 +6,8 @@ sqlparse==0.3.1
 gunicorn
 psycopg2-binary
 whitenoise==6.5.0
+dj-database-url
+
 
 
 
