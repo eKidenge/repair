@@ -28,7 +28,7 @@ SECRET_KEY = 'ftxnh_7475z^joy_*l9t*qnqow!@)y#(541^w1=(8--=3g#4*d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['102.212.247.74', '127.0.0.1', 'http://repair.nethmarandsons.com/']
+ALLOWED_HOSTS = ['102.212.247.74', '127.0.0.1', 'repair-7m3i.onrender.com', 'http://repair.nethmarandsons.com/']
 
 
 # Application definition
