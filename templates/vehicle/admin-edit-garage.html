@@ -1,0 +1,95 @@
+{% extends 'vehicle/adminbase.html' %}
+
+{% block content %}
+<head>
+    <style type="text/css">
+        /* Ensure the content isn't blocked by the navbar */
+        .container {
+            max-width: 80%;
+            margin: 0 auto;
+            padding-top: 80px; /* Adjust this value based on the height of your navbar */
+        }
+
+        .form-group {
+            margin-bottom: 1.5em;
+        }
+
+        .form-group label {
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            color: white;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        /* Style for better responsiveness */
+        .container h2 {
+            font-size: 2em;
+            color: #007bff;
+        }
+
+        .container p {
+            font-size: 1.2em;
+            color: #555;
+        }
+    </style>
+</head>
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Edit Garage Details</h2>
+    <p class="lead text-center mb-4">You can update the details of the garage below.</p>
+
+    <form method="POST" action="{% url 'admin-edit-garage' garage.id %}">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="name">Garage Name</label>
+            <input type="text" id="name" name="name" class="form-control" value="{{ garage.name }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" class="form-control" value="{{ garage.location }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="mechanic">Mechanic In Charge</label>
+            <input type="text" id="mechanic" name="mechanic" class="form-control" value="{{ garage.mechanic }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status" class="form-control" required>
+                <option value="Pending" {% if garage.status == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Approved" {% if garage.status == 'Approved' %}selected{% endif %}>Approved</option>
+                <option value="Rejected" {% if garage.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

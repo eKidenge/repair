@@ -1,0 +1,362 @@
+{% extends 'vehicle/adminbase.html' %}
+{% block content %}
+
+<!-- main content -->
+<div class="wrapper" style="padding: 20px; background-color: #f4f4f9; font-family: Arial, sans-serif;">
+
+  <!-- Report Header -->
+  <div class="report-header" style="text-align: center; margin-bottom: 20px;">
+    <h1 style="color: #333; font-size: 28px; margin-bottom: 5px;">{{ report_heading }}</h1>
+    
+    <!-- Hidden Date -->
+    <p id="generated-date" style="color: #555; font-size: 14px; display: none;">Generated on {{ current_date }}</p>
+    
+    <div style="margin-top: 15px;">
+      <!-- Centered Export Button -->
+      <div style="text-align: center; margin-top: 20px;">
+        <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false" aria-controls="export-options" style="padding: 10px 20px; background-color: #007bff; color: #fff; border: none; cursor: pointer; border-radius: 5px;" id="exportBtn">
+          Export Report
+        </button>
+        <div class="dropdown-content" id="export-options" style="display: none; position: absolute; background-color: #fff; border: 1px solid #ddd; min-width: 160px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); z-index: 1;">
+          <!-- Generate dynamic PDF using jsPDF and autoTable -->
+          <a href="#" onclick="generatePDF()" style="padding: 10px 16px; display: block; text-decoration: none; color: #333;">Export as PDF</a>
+          <!-- Export as Excel (CSV) -->
+          <a href="#" onclick="exportToExcel()" style="padding: 10px 16px; display: block; text-decoration: none; color: #333;">Export as Excel</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Filter Inputs -->
+<div style="text-align: center; margin-bottom: 20px;">
+  <label for="start-date">Start Date:</label>
+  <input type="date" id="start-date" style="margin-right: 10px;">
+
+  <label for="end-date">End Date:</label>
+  <input type="date" id="end-date" style="margin-right: 20px;">
+
+  <label for="department-filter">Department:</label>
+  <select id="department-filter" style="margin-right: 20px;">
+    <option value="">All Departments</option>
+    {% for r in reports %}
+      <option value="{{ r.customer.customer }}">{{ r.customer.customer }}</option>
+    {% endfor %}
+  </select>
+
+  <button onclick="filterReport()" style="background-color: #28a745; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer;">
+    Filter Report
+  </button>
+</div>
+
+<!-- Report Content -->
+<div class="report-content">
+  <table id="report-table" style="width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #ddd; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+    <thead>
+      <tr style="background-color: #007bff; color: #fff;">
+        <th style="padding: 12px 15px; text-align: left;">User Department</th>
+        <th style="padding: 12px 15px; text-align: left;">Vehicle Registration Number</th>
+        <th style="padding: 12px 15px; text-align: right;">Repair Date</th>
+        <th style="padding: 12px 15px; text-align: right;">Cost of Repair</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if reports %}
+        {% for r in reports %}
+        <tr style="border-bottom: 1px solid #ddd;">
+          <td class="department" data-label="Customer" style="padding: 10px 15px;">{{ r.customer.customer }}</td>
+          <td data-label="Vehicle Registration Number" style="padding: 10px 15px;">{{ r.vehicle_no }}</td>
+          <td data-label="Repair Date" class="repair-date" style="padding: 10px 15px; text-align: right;">{{ r.date }}</td>
+          <td data-label="Cost of Repair" style="padding: 10px 15px; text-align: right;">{{ r.cost }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 20px;">No reports available.</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- JavaScript for Filtering -->
+<script>
+  function filterReport() {
+    let startDate = document.getElementById("start-date").value;
+    let endDate = document.getElementById("end-date").value;
+    let department = document.getElementById("department-filter").value;
+
+    let rows = document.querySelectorAll("#report-table tbody tr");
+
+    rows.forEach(row => {
+      let dateCell = row.querySelector(".repair-date");
+      let departmentCell = row.querySelector(".department");
+
+      let showRow = true;
+
+      if (dateCell) {
+        let rowDate = new Date(dateCell.textContent.trim());
+        if (startDate && new Date(startDate) > rowDate) showRow = false;
+        if (endDate && new Date(endDate) < rowDate) showRow = false;
+      }
+
+      if (departmentCell) {
+        let rowDepartment = departmentCell.textContent.trim();
+        if (department && rowDepartment !== department) showRow = false;
+      }
+
+      row.style.display = showRow ? "" : "none";
+    });
+  }
+</script>
+
+
+
+<!-- Include jsPDF and autoTable from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+<!-- JavaScript for Dropdown and Export -->
+<script>
+  // Toggle dropdown visibility and update ARIA attribute
+  const dropdownBtn = document.getElementById('exportBtn');
+  const dropdownContent = document.getElementById('export-options');
+
+  dropdownBtn.addEventListener('click', function(event) {
+    event.stopPropagation();
+    const isVisible = dropdownContent.style.display === 'block';
+    dropdownContent.style.display = isVisible ? 'none' : 'block';
+    dropdownBtn.setAttribute('aria-expanded', !isVisible);
+  });
+
+  // Hide dropdown when clicking outside with a slight delay to avoid flicker
+  document.addEventListener('click', function() {
+    setTimeout(() => {
+      dropdownContent.style.display = 'none';
+      dropdownBtn.setAttribute('aria-expanded', false);
+    }, 150);
+  });
+
+// Generate dynamic PDF with jsPDF and autoTable
+function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Set title and date for the printed report
+  const title = 'COUNTY GOVERNMENT OF NAKURU';
+  const reportTitle = 'VEHICLE REPAIR REPORT AS AT ' + '{{ current_date }}';
+
+  // Set font size for the title
+  doc.setFontSize(18);
+  // Calculate the width of the title text
+  const titleWidth = doc.getStringUnitWidth(title) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+  // Calculate the x position to center the title
+  const titleX = (doc.internal.pageSize.width - titleWidth) / 2;
+  // Add the title to the PDF at the centered x position
+  doc.text(title, titleX, 22);
+
+  // Set font size for the report title
+  doc.setFontSize(14);
+  // Calculate the width of the report title text
+  const reportTitleWidth = doc.getStringUnitWidth(reportTitle) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+  // Calculate the x position to center the report title
+  const reportTitleX = (doc.internal.pageSize.width - reportTitleWidth) / 2;
+  // Add the report title to the PDF at the centered x position
+  doc.text(reportTitle, reportTitleX, 30);
+
+  // Add an underline after the report title
+  const lineY = 32;  // Position just below the report title
+  doc.setLineWidth(0.5);  // Line thickness
+  doc.line(reportTitleX, lineY, reportTitleX + reportTitleWidth, lineY);  // Underline the text
+
+  // Add the table from the HTML with custom styles and grid lines
+  doc.autoTable({ 
+    html: '#report-table',
+    startY: 40,
+    styles: { 
+      halign: 'left',  // Align content to the left
+      valign: 'middle', // Align vertically in the middle
+      fontSize: 12,     // Set font size
+      cellPadding: 5,   // Add padding inside cells
+      lineWidth: 0.5,   // Line width for grid
+      lineColor: [0, 0, 0], // Black grid lines
+      overflow: 'linebreak', // Handle long text
+    },
+    headStyles: { 
+      fillColor: [0, 123, 255], // Blue background for header
+      textColor: [255, 255, 255], // White text color
+      fontStyle: 'bold',  // Bold header text
+      halign: 'center',   // Center header text
+    },
+    bodyStyles: {
+      textColor: [0, 0, 0],  // Black text color for body
+      halign: 'left',        // Align left for content
+    },
+    columnStyles: {
+      0: { cellWidth: 'auto' }, // Adjust column width automatically for the User Department
+      1: { cellWidth: 'auto' }, // Adjust column width for Vehicle Registration Number
+      2: { halign: 'center' },  // Align Repair Date column to the center
+      3: { halign: 'right' },   // Align Cost of Repair to the right
+    },
+    margin: { top: 40 },  // Set top margin for table
+    didDrawPage: function (data) {
+      // Draw grid lines between the cells and across the rows
+      doc.setDrawColor(0, 0, 0);  // Set grid line color (black)
+      doc.setLineWidth(0.3);  // Line thickness for grid
+
+      // Loop through the rows and columns to draw grid lines
+      for (let i = 0; i < data.table.body.length; i++) {
+        for (let j = 0; j < data.table.body[i].length; j++) {
+          const cell = data.table.body[i][j];
+          doc.rect(cell.x, cell.y, cell.width, cell.height);  // Draw grid rectangle for each cell
+        }
+      }
+
+      // Draw the outer border around the entire page
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+      const margin = 10; // Margin from the edges of the page
+
+      // Set border style (thickness and color)
+      doc.setDrawColor(0, 0, 0);  // Black border color
+      doc.setLineWidth(1);        // Border thickness
+      doc.rect(margin, margin, pageWidth - 2 * margin, pageHeight - 2 * margin);  // Outer rectangle (border)
+    }
+  });
+
+  // Save the PDF
+  doc.save('vehicle_repair_report_{{ current_date|date:"Y-m-d" }}.pdf');
+}
+
+
+ // Export as Excel (CSV Format)
+function exportToExcel() {
+  const table = document.getElementById('report-table');
+  if (table.rows.length <= 1) {
+    alert('No data to export.');
+    return;
+  }
+
+  // Set title and date for the printed report
+  const title = 'COUNTY GOVERNMENT OF NAKURU';
+  const reportTitle = 'VEHICLE REPAIR REPORT AS AT ' + '{{ current_date }}';
+
+  // Convert title and reportTitle to CSV format and add them to the data
+  let csvData = `"${title}"\n"${reportTitle}"\n\n`;
+
+  const rows = Array.from(table.rows);
+  
+  // Add the table headers (excluding the title row)
+  csvData += rows.map(row =>
+    Array.from(row.cells)
+      .map(cell => `"${cell.innerText.trim()}"`
+    ).join(',')
+  ).join('\n');
+
+  const blob = new Blob([csvData], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'vehicle_report.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+</script>
+
+<!-- Print-specific and Mobile Responsive Styles -->
+<style>
+  /* Page Content */
+  .wrapper {
+    padding: 20px;
+    background-color: #f4f4f9;
+    font-family: Arial, sans-serif;
+  }
+
+  .report-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 5px;
+  }
+
+  p {
+    color: #555;
+    font-size: 14px;
+  }
+
+  .report-content {
+    margin-top: 30px;
+  }
+
+  /* Print-specific Styles */
+  @media print {
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .dropdown-btn,
+    .dropdown-content {
+      display: none;
+    }
+
+    .wrapper {
+      padding: 10px;
+      margin: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      page-break-before: always;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    h1, p {
+      text-align: center;
+      color: black !important;
+      margin: 20px 0;
+    }
+
+    .report-header {
+      margin-bottom: 20px;
+    }
+
+    .report-content {
+      margin-top: 20px;
+    }
+
+    .report-table-wrapper {
+      margin-top: 30px;
+    }
+  }
+
+  /* Mobile Responsive Styles */
+  @media only screen and (max-width: 600px) {
+    table {
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 6px;
+    }
+  }
+</style>
+
+{% endblock %}

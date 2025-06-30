@@ -1,0 +1,74 @@
+{% extends 'vehicle/adminbase.html' %}
+{% block content %}
+<head>
+    <style type="text/css">
+        form {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+        }
+
+        form .form-group {
+            margin-bottom: 15px;
+        }
+
+        form input[type="text"] {
+            border-radius: 5px;
+            font-size: 1em;
+            padding: 10px;
+        }
+
+        form button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+
+        .container {
+            max-width: 70%;
+            margin: 0 auto;
+        }
+
+        .container h2 {
+            font-size: 2em;
+            margin-bottom: 1.5em;
+            color: #007bff;
+        }
+
+        .container p {
+            font-size: 1.1em;
+            margin-bottom: 2em;
+        }
+    </style>
+</head>
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Add New Garage</h2>
+    <p class="lead text-center mb-4">Fill out the form below to add a new garage to the system.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="garage_name">Garage Name</label>
+            <input type="text" class="form-control" id="garage_name" name="garage_name" required placeholder="Enter garage name">
+        </div>
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" class="form-control" id="location" name="location" required placeholder="Enter garage location">
+        </div>
+        <div class="form-group">
+            <label for="mechanic">Mechanic In Charge</label>
+            <input type="text" class="form-control" id="mechanic" name="mechanic" required placeholder="Enter mechanic's name">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Add Garage</button>
+    </form>
+</div>
+{% endblock %}

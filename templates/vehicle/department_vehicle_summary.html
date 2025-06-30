@@ -1,0 +1,62 @@
+{% extends 'vehicle/customerbase.html' %}
+
+{% block content %}
+    <style>
+        /* Custom CSS for department vehicle summary */
+        h2 {
+            color: #28a745;
+        }
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #28a745;
+            color: white;
+        }
+        td {
+            background-color: #ffffff;
+        }
+
+        /* Add left margin to move the content right */
+        .content-container {
+            margin-left: 250px; /* Adjust this value to match your navbar's width */
+        }
+    </style>
+
+    <div class="content-container">
+        <h2>Operational Vehicles</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Vehicle Model</th>
+                    <th>Make</th>
+                    <th>Year</th>
+                    <th>Registration Number</th>
+                    <th>Status</th>
+                    <th>Last Service Date</th>
+                    <th>Next Service Due</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vehicle in operational_vehicles %}
+                    <tr>
+                        <td>{{ vehicle.model }}</td>
+                        <td>{{ vehicle.make }}</td>
+                        <td>{{ vehicle.year }}</td>
+                        <td>{{ vehicle.registration_number }}</td>
+                        <td>{{ vehicle.status }}</td>
+                        <td>{{ vehicle.last_service_date }}</td>
+                        <td>{{ vehicle.next_service_due }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

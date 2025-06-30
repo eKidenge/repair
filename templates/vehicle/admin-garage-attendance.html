@@ -1,0 +1,88 @@
+{% extends 'vehicle/adminbase.html' %}
+{% block content %}
+<head>
+    <style type="text/css">
+        .table {
+            font-size: 1.1em;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .table-bordered {
+            border: 1px solid #ddd;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
+        }
+
+        thead.thead-dark {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            padding: 8px 16px;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
+        }
+
+        .container {
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        .container h2 {
+            color: #007bff;
+            font-size: 2em;
+            margin-bottom: 1.5em;
+        }
+
+        .container p {
+            font-size: 1.1em;
+            margin-bottom: 1.5em;
+        }
+    </style>
+</head>
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Garage Attendance</h2>
+    <p class="lead text-center mb-4">Track the attendance of garages and their mechanics.</p>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th>Garage Name</th>
+                <th>Attendance Date</th>
+                <th>Attendance Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attendance in garage_attendance %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ attendance.garage.name }}</td>
+                    <td>{{ attendance.date }}</td>
+                    <td>{{ attendance.status }}</td>
+                    <td>
+                        <a href="{% url 'edit-attendance' attendance.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

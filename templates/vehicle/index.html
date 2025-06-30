@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Full height coverage */
+    html, body {
+      height: 100%;
+      font-family: 'Nunito Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Ensure the main content expands dynamically while keeping the footer at the bottom */
+    .content-wrapper {
+      flex: 1;
+      background-image: url('{% static "images/bg.jpg" %}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Jumbotron - Transparent background to allow bg image visibility */
+    .jumbotron {
+      background: rgba(0, 0, 0, 0.5); /* Semi-transparent */
+      color: blue;
+      text-align: center;
+      font-weight: bold;
+      padding: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      border-radius: 10px;
+      max-width: 80%;
+    }
+
+    .jumbotron img {
+      width: 100px;
+      height: auto;
+      margin: 0 20px;
+    }
+
+    .jumbotron h1 {
+      flex: 1;
+    }
+
+    /* Marquee effect */
+    .marquee-container {
+      width: 100%;
+      position: relative;
+      margin-top: 20px;
+    }
+
+    .marquee {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px; /* Adds spacing between images */
+    }
+
+    .marquee img {
+      max-width: 120px;
+      height: auto;
+    }
+
+    @media (max-width: 768px) {
+      .marquee img {
+        max-width: 80px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .jumbotron {
+        flex-direction: column;
+      }
+
+      .jumbotron img {
+        width: 80px;
+        margin-bottom: 10px;
+      }
+
+      .marquee img {
+        max-width: 80px;
+      }
+    }
+
+    /* Footer Styling */
+    footer {
+      padding: 20px;
+      background-color: #4f55c7;
+      text-align: center;
+      color: white;
+      width: 100%;
+    }
+
+    .fa {
+      padding: 15px;
+      font-size: 20px;
+      width: 50px;
+      text-align: center;
+      text-decoration: none;
+      margin: 5px;
+      border-radius: 50%;
+    }
+
+    .fa-facebook { background: #3B5998; color: white; }
+    .fa-whatsapp { background: #25d366; color: white; }
+    .fa-twitter { background: #55ACEE; color: white; }
+    .fa-instagram { background: #125688; color: white; }
+  </style>
+</head>
+
+<body>
+  {% include "vehicle/navbar.html" %}
+
+  <div class="content-wrapper">
+    <div class="jumbotron">
+      <img src="{% static 'images/ferrari.png' %}" alt="Left Logo" />
+      <h1>Welcome to the Vehicle Repair & Maintenance System for
+        the Nakuru County Government</h1>
+      <img src="{% static 'images/ford.png' %}" alt="Right Logo" />
+    </div>
+
+    <div class="marquee-container">
+      <div class="marquee">
+        <img src="{% static 'images/ford.png' %}" alt="ford" />
+        <img src="{% static 'images/mahindra.png' %}" alt="mahindra" />
+        <img src="{% static 'images/ferrari.png' %}" alt="ferrari" />
+        <img src="{% static 'images/tata.png' %}" alt="tata" />
+        <img src="{% static 'images/hero1.png' %}" alt="hero1" />
+        <img src="{% static 'images/rolls.png' %}" alt="rolls" />
+        <img src="{% static 'images/ferrari.png' %}" alt="ferrari" />
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>
+      <a href="https://facebook.com/" class="fa fa-facebook"></a>
+      <a href="https://api.whatsapp.com/send?phone=254742007544&text=Hello%20Kidenge.%0d%0aHow%20are%20you%20%3f%0d%0aI%20came%20from%20your%20website.&source=&data=#" class="fa fa-whatsapp"></a>
+      <a href="https://instagram.com/" class="fa fa-instagram"></a>
+      <a href="https://twitter.com/" class="fa fa-twitter"></a>
+    </p>
+    <p>County of Unlimited Resources</p>
+    <p>&copy; <span id="currentYear"></span> Vehicles Repair & Maintenance System. All Rights Reserved.</p>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+  </footer>
+</body>
+
+</html>

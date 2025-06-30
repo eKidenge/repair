@@ -1,0 +1,108 @@
+{% extends 'vehicle/customerbase.html' %}
+
+{% block content %}
+    <style>
+        /* Page Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header */
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-bottom: 2px solid #4CAF50;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover td {
+            background-color: #f1f1f1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            th, td {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <h2>Vehicles Awaiting Inspection</h2>
+        {% if awaiting_inspection %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Vehicle Model</th>
+                        <th>Make</th>
+                        <th>Year</th>
+                        <th>Registration Number</th>
+                        <th>Status</th>
+                        <th>Last Service Date</th>
+                        <th>Next Service Due</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vehicle in awaiting_inspection %}
+                        <tr>
+                            <td>{{ vehicle.model }}</td>
+                            <td>{{ vehicle.make }}</td>
+                            <td>{{ vehicle.year }}</td>
+                            <td>{{ vehicle.registration_number }}</td>
+                            <td>{{ vehicle.status }}</td>
+                            <td>{{ vehicle.last_service_date }}</td>
+                            <td>{{ vehicle.next_service_due }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="text-align: center; color: #666; font-size: 16px;">
+                No vehicles are awaiting inspection at this time.
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}

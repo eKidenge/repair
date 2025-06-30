@@ -1,0 +1,79 @@
+{% extends 'vehicle/customerbase.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<head>
+  <style media="screen">
+    input[type=text], select, input[type=number], textarea {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input[type=submit] {
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type=submit]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+
+<br><br><br><br><br>
+<h1 style="text-align:center;">MAKE REQUEST</h1>
+<div>
+  <form method="post" enctype="multipart/form-data" style="margin-left:200px;margin-right:200px;">
+      {% csrf_token %}
+      
+      <!-- Department Dropdown -->
+      <label for="department">DEPARTMENT</label>
+      {% render_field enquiry.department class="form-control" %}
+      <br>
+
+      <!-- Vehicle Category Dropdown -->
+      <label for="category">Vehicle Category</label>
+      {% render_field enquiry.category class="form-control" %}
+      <br>
+
+      <!-- Vehicle Number -->
+      <label for="vehicle_no">Vehicle Registration Number</label>
+      {% render_field enquiry.vehicle_no class="form-control" placeholder="Vehicle Number" %}
+
+      <!-- Vehicle Name -->
+      <label for="vehicle_name">Vehicle Type</label>
+      {% render_field enquiry.vehicle_name class="form-control" placeholder="Vehicle Name" %}
+
+      <!-- Vehicle Brand -->
+      <label for="vehicle_brand">Vehicle Make</label>
+      {% render_field enquiry.vehicle_brand class="form-control" placeholder="Vehicle Brand" %}
+
+      <!-- Vehicle Model -->
+      <label for="vehicle_model">Vehicle Model</label>
+      {% render_field enquiry.vehicle_model class="form-control" placeholder="Vehicle Model" %}
+
+      <!-- Problem Description -->
+      <label for="problem_description">Problem Description</label>
+      {% render_field enquiry.problem_description class="form-control" placeholder="Problem Description" %}
+
+      <!-- Image Upload -->
+      <label for="image">Upload Image</label>
+      {% render_field enquiry.image class="form-control" %}
+      <br>
+
+      <input type="submit" value="Submit">
+  </form>
+</div>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% endblock content %}

@@ -1,0 +1,137 @@
+{% extends 'vehicle/customerbase.html' %}
+
+{% block content %}
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Content Section Styling */
+        .content {
+            padding: 20px;
+            margin-left: 82px; /* Default margin for collapsed sidebar */
+         /* Smooth transition for sidebar toggle */
+        }
+
+        .sidebar-expand .content {
+            margin-left: 250px; /* Adjust margin for expanded sidebar */
+        }
+
+        /* Header Styling */
+        h2 {
+            text-align: center;
+            color: #17a2b8;
+            font-size: 24px;
+            margin: 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border-bottom: 2px solid #17a2b8;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* Table Wrapper for Overflow Handling */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #17a2b8;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        tr:hover td {
+            background-color: #eaf7ff;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0; /* Reset margin for small screens */
+            }
+
+            table, th, td {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+
+    <div class="content">
+        <h2>Vehicles Approved for Repair</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Vehicle Model</th>
+                        <th>Make</th>
+                        <th>Year</th>
+                        <th>Registration Number</th>
+                        <th>Status</th>
+                        <th>Last Service Date</th>
+                        <th>Next Service Due</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vehicle in approved_for_repair %}
+                        <tr>
+                            <td>{{ vehicle.model }}</td>
+                            <td>{{ vehicle.make }}</td>
+                            <td>{{ vehicle.year }}</td>
+                            <td>{{ vehicle.registration_number }}</td>
+                            <td>{{ vehicle.status }}</td>
+                            <td>{{ vehicle.last_service_date }}</td>
+                            <td>{{ vehicle.next_service_due }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Add logic to toggle sidebar-expand class dynamically
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const body = document.body;
+
+            sidebar.addEventListener('mouseenter', () => {
+                body.classList.add('sidebar-expand');
+            });
+
+            sidebar.addEventListener('mouseleave', () => {
+                body.classList.remove('sidebar-expand');
+            });
+        });
+    </script>
+{% endblock %}
